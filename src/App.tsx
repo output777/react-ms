@@ -1,19 +1,16 @@
-import { useState } from 'react';
 import './App.css';
-import Circle from './components/Circle';
-import Form from './components/Form';
-
-
+import Main from './pages/Main';
+import { ThemeProvider } from 'styled-components';
+import { darkTheme, lightTheme } from './theme';
+import { useState } from 'react';
 
 function App() {
+  const [value, setValue] = useState(false);
+
   return (
-  <div>
-    {/*
-      <Circle borderColor='yellow' bgColor="teal" />
-      <Circle text="동그라미" bgColor="tomato" /> 
-    */}
-    <Form />
-  </div>
+    <ThemeProvider theme={value ? darkTheme : lightTheme}>
+      <Main value={value} setValue={setValue} />
+    </ThemeProvider>
   );
 }
 
