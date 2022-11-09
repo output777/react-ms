@@ -19,7 +19,7 @@ interface ChangeThemeProps {
 
 function Main({value, setValue}:ChangeThemeProps) {
   const onClick = () => {
-    setValue((prev:boolean) => !prev);
+    setValue((prev) => !prev);
   }
 
   return (
