@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
 /**
@@ -37,6 +37,11 @@ interface CircleProps {
 
 // text='defalut text'로 기본값 주기 (es6)
 const Circle = ({bgColor, borderColor, text='defalut text'}:CircleProps) => {
+  /**
+   * <number|string>는 value가 number, string 둘 다 될 수 있음
+   * defalut값을 넣어주면 TypeScript가 추론해서 타입을 지정해주기 때문에 위와 같은 경우말고는 따로 지정해 줄 필요는 없음
+   */
+  const [value, setValue] = useState<number|string>(0);
   return (
     // borderColor이 undefined이면 bgColor라고 기본 값을 줌 -> 이렇게 하면 에러 해결
     <Container bgColor={bgColor} borderColor={borderColor ?? bgColor}>  
