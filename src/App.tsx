@@ -1,17 +1,9 @@
 import './App.css';
-import Main from './pages/Main';
-import { ThemeProvider } from 'styled-components';
-import { darkTheme, lightTheme } from './theme';
-import { useState } from 'react';
+import Router from './Router';
+
 
 function App() {
-  const [value, setValue] = useState(false);
-
-  return (
-    <ThemeProvider theme={value ? darkTheme : lightTheme}>
-      <Main value={value} setValue={setValue} />
-    </ThemeProvider>
-  );
+  return <Router />
 }
 
 export default App;
