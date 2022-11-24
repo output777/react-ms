@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import {Link} from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import path from 'path';
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -23,10 +24,11 @@ const Coin = styled.li`
   border-radius: 15px;
   margin-bottom: 10px;
   a {
+    display: flex;
+    align-items:center;
     padding:20px;
     transition: color 0.2s ease-in;
-    // block으로 변경해줘서 끝부분을 눌러도 링크될 수 있게 만듬
-    display: block;
+    // block으로 변경해줘서 끝부분을 눌러도 링크될 수 있게 만듬 -> 그런데 display:flex하면 block 지워도 됨
   }
   &:hover {
     a {
@@ -45,6 +47,12 @@ const Loader = styled.span`
   padding: 20px;
 `
 
+const Img = styled.img`
+  width:35px;
+  height:35px;
+  margin-right: 10px;
+`
+
 interface CoinInterface {
   id: string,
   name: string,
@@ -54,7 +62,6 @@ interface CoinInterface {
   is_active: boolean,
   type: string,
 }
-
 
 const Coins = () => {
   const [coins, setCoins] = useState<CoinInterface[]>([]);
@@ -82,7 +89,8 @@ const Coins = () => {
         <CoinsList>
           {coins.map(coin => 
           <Coin key={coin.id}>
-            <Link to={`/${coin.id}`}>
+            <Link to={`/${coin.id}`} state={{name:coin.name}}>
+            <Img src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`} />
             {coin.name} &rarr;
             </Link> 
           </Coin>
