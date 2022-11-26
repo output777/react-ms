@@ -1,6 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
 import './App.css';
 import Router from './Router';
+import { ReactQueryDevtools } from 'react-query/devtools';
+import { HelmetProvider } from 'react-helmet-async';
 
 // https://github.com/zacanger/styled-reset/blob/master/src/index.ts
 const GlobalStyle = createGlobalStyle`
@@ -68,10 +70,15 @@ const GlobalStyle = createGlobalStyle`
 `
 
 function App() {
-  return <>
-  <GlobalStyle />
-  <Router />
-  </>
+  return (
+    <>
+    <GlobalStyle />
+    <HelmetProvider>
+      <Router />
+    </HelmetProvider>
+    <ReactQueryDevtools initialIsOpen={false} />
+    </>
+  )
 }
 
 export default App;

@@ -1,6 +1,9 @@
 import {useState, useEffect} from 'react';
 import {useLocation, useParams, Outlet, Link, useMatch} from 'react-router-dom';
 import styled from 'styled-components';
+import { fetchCoinInfo, fetchCoinTickers } from '../api';
+import { useQuery } from 'react-query';
+import { Helmet } from 'react-helmet-async';
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -138,17 +141,20 @@ interface PriceDate {
 }
 
 
+
 const Coin = () => {
-  const [loading, setLoading] = useState(true);
   const {coinId} = useParams();
   const {state} = useLocation();
-  const [info, setInfo] = useState<InfoDate>();
-  const [priceInfo, setPriceInfo] = useState<PriceDate>();
   const priceMatch = useMatch('/:coinId/price');
   const chartMatch = useMatch('/:coinId/chart');
-  console.log('priceMatch', priceMatch);
-  console.log('chartMatch', chartMatch);
+  const {isLoading: infoLoading, data: infoData} = useQuery<InfoDate>(['info', coinId], () => fetchCoinInfo(coinId))
+  const {isLoading: tickersLoading, data: tickersData} = useQuery<PriceDate>(['tickers',coinId], () => fetchCoinTickers(coinId), {
+    refetchInterval: 5000,
+  })
 
+/*   const [loading, setLoading] = useState(true);
+  const [info, setInfo] = useState<InfoDate>();
+  const [priceInfo, setPriceInfo] = useState<PriceDate>();
   useEffect(() => {
     (async () => {
       // 캡슐화
@@ -158,14 +164,16 @@ const Coin = () => {
       setPriceInfo(priceDate);
       setLoading(false);
     })();
-  }, [coinId]);
+  }, [coinId]); */
 
-
-
+  const loading = infoLoading || tickersLoading;
   return (
     <Container>
+      <Helmet>
+        <title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</title>
+      </Helmet>
       <Header>
-        <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name}</Title>
+        <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
       </Header>
       {loading 
       ? <Loader>Loading...</Loader> 
@@ -174,28 +182,28 @@ const Coin = () => {
         <Overview>
           <OverviewItem>
             <span>rank:</span>
-            <span>{info?.rank}</span>
+            <span>{infoData?.rank}</span>
           </OverviewItem>
           <OverviewItem>
             <span>symbol:</span>
-            <span>${info?.symbol}</span>
+            <span>${infoData?.symbol}</span>
           </OverviewItem>
           <OverviewItem>
-            <span>open source:</span>
-            <span>{info?.open_source}</span>
+            <span>Price:</span>
+            <span>${tickersData?.quotes.USD.price}</span>
           </OverviewItem>
         </Overview>
         <Description>
-          {info?.description}
+          {infoData?.description}
         </Description>
         <Overview>
           <OverviewItem>
             <span>total supply:</span>
-            <span>{priceInfo?.total_supply}</span>
+            <span>{tickersData?.total_supply}</span>
           </OverviewItem>
           <OverviewItem>
             <span>max supply:</span>
-            <span>{priceInfo?.max_supply}</span>
+            <span>{tickersData?.max_supply}</span>
           </OverviewItem>
         </Overview>
         <Tabs>
@@ -206,7 +214,7 @@ const Coin = () => {
             <Link to={`/${coinId}/price`}>Price</Link>
           </Tab>
         </Tabs>
-        <Outlet />
+        <Outlet context={{coinId}} />
       </>
       } 
       </Container>
